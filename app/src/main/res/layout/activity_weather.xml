@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/plant_background"
+
+    android:padding="16dp">
+    <!-- Background Image -->
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/plant_background" /> <!-- Replace with your image -->
+
+    <!-- Semi-Transparent Overlay -->
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000" /> <!-- Semi-transparent black -->
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weather Insights for Plants"
+                android:textSize="24sp"
+                android:textColor="@android:color/white"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:paddingBottom="16dp" />
+
+            <TextView
+                android:id="@+id/precipitationTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Precipitation: Regular rainfall helps maintain soil moisture and supports plant growth. Overwatering can lead to root rot."
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/temperatureTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Temperature: Plants thrive within specific temperature ranges. Extreme cold or heat can cause stress or damage."
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/humidityTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Humidity: High humidity promotes disease, while low humidity can cause dehydration. Balanced humidity is ideal for growth."
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/weatherForecastButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:background="#000000"
+                android:text="Today's Weather Forecast"
+                android:textColor="#FFFFFF"
+                android:padding="12dp"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:id="@+id/navigationBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/black"
+        android:padding="0dp">
+
+        <!-- Home Button -->
+        <Button
+            android:id="@+id/homeButton"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Home"
+            android:drawableTop="@drawable/ic_home"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+
+
+        <Button
+            android:id="@+id/weatherButton"
+            android:layout_width="19dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Weather"
+            android:drawableTop="@drawable/ic_weather"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+
+
+        <Button
+            android:id="@+id/chatbotButton"
+            android:layout_width="17dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Chatbot"
+            android:drawableTop="@drawable/ic_chat"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+
+
+        <Button
+            android:id="@+id/plantRecognitionButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Plant Scan"
+            android:drawableTop="@drawable/ic_plant_recognition"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Chatbot Page"
+        android:textSize="24sp" />
+
+    <LinearLayout
+        android:id="@+id/navigationBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/black"
+        android:padding="0dp">
+
+        <!-- Home Button -->
+        <Button
+            android:id="@+id/homeButton"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Home"
+            android:drawableTop="@drawable/ic_home"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+
+
+        <Button
+            android:id="@+id/weatherButton"
+            android:layout_width="19dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Weather"
+            android:drawableTop="@drawable/ic_weather"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+
+
+        <Button
+            android:id="@+id/chatbotButton"
+            android:layout_width="17dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Chatbot"
+            android:drawableTop="@drawable/ic_chat"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+
+
+        <Button
+            android:id="@+id/plantRecognitionButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Plant Scan"
+            android:drawableTop="@drawable/ic_plant_recognition"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+
+    </LinearLayout>
+</RelativeLayout>

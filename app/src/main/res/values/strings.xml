@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">gardening</string>
+    <string-array name="spinner_a_options">
+        <item>Rose</item>
+        <item>Hibiscus</item>
+        <item>Tulsi</item>
+    </string-array>
+
+    <!-- Dropdown options for Spinner B (soil types) -->
+    <string-array name="spinner_b_options">
+        <item>Loamy</item>
+        <item>Sandy Loam</item>
+        <item>Black</item>
+    </string-array>
+
+    <string-array name="spinner_c_options">
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
+
+</resources>
