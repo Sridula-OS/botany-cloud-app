@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Background Image -->
+    <ImageView
+        android:id="@+id/backgroundImage3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/tulsi" /> <!-- Replace with your image -->
+
+    <!-- Semi-Transparent Overlay -->
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000" /> <!-- Semi-transparent black -->
+
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tulsiTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tulsi Plant Water Calculator"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:textColor="#D7D7D7"
+        android:layout_marginTop="20dp" />
+
+    <!-- Main Content Section -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tulsiTitle"
+        android:layout_above="@id/navigationBar"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Day Selection -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Plant Age (Days):"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#D7D7D7"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/daySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:background="#D7D7D7"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Pot Size Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Pot Size (m²):"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#D7D7D7"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/potSizeSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:background="#D7D7D7"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Precipitation Input -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enter Precipitation (mm):"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#D7D7D7"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/precipitationEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter precipitation in mm"
+                android:inputType="numberDecimal"
+                android:background="#D7D7D7"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Sensor Data Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sensor Readings"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#D7D7D7"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Soil Moisture -->
+            <TextView
+                android:id="@+id/soilMoistureTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Soil Moisture: N/A"
+                android:textSize="18sp"
+                android:textColor="#D7D7D7"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Temperature -->
+            <TextView
+                android:id="@+id/temperatureTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Temperature: N/A"
+                android:textSize="18sp"
+                android:textColor="#D7D7D7"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Humidity -->
+            <TextView
+                android:id="@+id/humidityTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Humidity: N/A"
+                android:textSize="18sp"
+                android:textColor="#D7D7D7"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Result Section -->
+            <TextView
+                android:id="@+id/resultTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Water Needed: N/A"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="24dp"
+                android:padding="16dp"
+                android:background="#E8F5E9" />
+
+            <!-- Calculate Button -->
+            <Button
+                android:id="@+id/calculateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Calculate Water Needed"
+                android:textSize="18sp"
+                android:padding="16dp" />
+
+            <Button
+                android:id="@+id/waterplantButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Water plant"
+                android:textSize="18sp"
+                android:padding="16dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Navigation Bar -->
+    <LinearLayout
+        android:id="@+id/navigationBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/black"
+        android:padding="0dp">
+
+        <!-- Home Button -->
+        <Button
+            android:id="@+id/homeButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_home"
+            android:drawablePadding="8dp"
+            android:text="Home"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+
+        <!-- Weather Button -->
+        <Button
+            android:id="@+id/weatherButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_weather"
+            android:drawablePadding="8dp"
+            android:text="Rain"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+
+        <!-- Chatbot Button -->
+        <Button
+            android:id="@+id/chatbotButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_chat"
+            android:drawablePadding="8dp"
+            android:text="Chat"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+
+        <!-- Plant Recognition Button -->
+        <Button
+            android:id="@+id/plantRecognitionButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_plant_recognition"
+            android:drawablePadding="8dp"
+            android:text="Scan"
+            android:textColor="@color/white"
+            android:elevation="4dp" />
+    </LinearLayout>
+</RelativeLayout>

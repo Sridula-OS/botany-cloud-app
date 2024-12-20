@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <!-- Add Plants Button (Top Right) -->
+    <Button
+        android:id="@+id/addPlantsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/black"
+        android:drawableEnd="@drawable/ic_add"
+        android:drawablePadding="8dp"
+        android:text="Add Plants" />
+
+    <!-- Your Plants Section -->
+    <TextView
+        android:id="@+id/yourPlantsHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addPlantsButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp"
+        android:text="Your Plants"
+        android:textSize="20sp"
+        android:paddingLeft="16dp"
+        android:textStyle="bold" />
+
+    <!-- Example for showing user’s plants -->
+    <LinearLayout
+        android:id="@+id/yourPlantsSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/yourPlantsHeader"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="16dp"
+        android:orientation="vertical">
+        <!-- Placeholder text for now -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="No plants added yet."
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navigationBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/black"
+        android:orientation="horizontal"
+        android:padding="0dp">
+
+        <!-- Home Button -->
+        <Button
+            android:id="@+id/homeButton"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_home"
+            android:drawablePadding="8dp"
+            android:elevation="4dp"
+            android:text="Home"
+            android:textSize="12sp"
+            android:textColor="@color/white" />
+
+
+        <Button
+            android:id="@+id/weatherButton"
+            android:layout_width="19dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_weather"
+            android:drawablePadding="8dp"
+            android:elevation="4dp"
+            android:text="Rain"
+            android:textSize="12sp"
+            android:textColor="@color/white" />
+
+
+        <Button
+            android:id="@+id/chatbotButton"
+            android:layout_width="17dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_chat"
+            android:drawablePadding="8dp"
+            android:elevation="4dp"
+            android:text="Chat"
+            android:textSize="12sp"
+            android:textColor="@color/white" />
+
+
+        <Button
+            android:id="@+id/plantRecognitionButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_plant_recognition"
+            android:drawablePadding="8dp"
+            android:elevation="4dp"
+            android:text="Scan"
+            android:textSize="12sp"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

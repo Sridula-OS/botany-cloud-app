@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Title Text -->
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="94dp"
+                android:layout_marginTop="32dp"
+                android:text="Assistant here, how can I help you?"
+                android:textAlignment="center"
+                android:textSize="34sp" />
+
+            <!-- TextInputLayout containing the TextInputEditText -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="64dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/queryEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter message" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Button to send the query -->
+            <Button
+                android:id="@+id/sendPromptButton"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="32dp"
+                android:text="Send query" />
+
+            <!-- ProgressBar to show loading state -->
+            <ProgressBar
+                android:id="@+id/sendPromptProgressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:visibility="gone" />
+
+            <!-- TextView to show model's response -->
+            <TextView
+                android:id="@+id/modelResponseTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/navigationBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/black"
+        android:padding="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+
+        <Button
+            android:id="@+id/homeButton"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Home"
+            android:drawableTop="@drawable/ic_home"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:elevation="4dp" />
+
+
+        <Button
+            android:id="@+id/weatherButton"
+            android:layout_width="19dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Rain"
+            android:drawableTop="@drawable/ic_weather"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:elevation="4dp" />
+
+
+        <Button
+            android:id="@+id/chatbotButton"
+            android:layout_width="17dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Chat"
+            android:drawableTop="@drawable/ic_chat"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:elevation="4dp" />
+
+
+        <Button
+            android:id="@+id/plantRecognitionButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Scan"
+            android:drawableTop="@drawable/ic_plant_recognition"
+            android:drawablePadding="8dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:elevation="4dp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
