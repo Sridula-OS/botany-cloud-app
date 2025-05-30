@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "494688039075",
+    "firebase_url": "https://iot-lab-el-default-rtdb.firebaseio.com",
+    "project_id": "iot-lab-el",
+    "storage_bucket": "iot-lab-el.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494688039075:android:86db3aa5f08f4a5a398f16",
+        "android_client_info": {
+          "package_name": "com.example.gardening"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZwpItcRVYpa9mIFguyZtWnQpeI9OClv4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -138,7 +138,18 @@
                 android:text="Humidity: N/A"
                 android:textSize="18sp"
                 android:textColor="#D7D7D7"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginBottom="8dp" />
+
+            <!-- ph -->
+            <TextView
+                android:id="@+id/phTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="pH: N/A"
+                android:textSize="18sp"
+                android:textColor="#D7D7D7"
+                android:layout_marginBottom="20dp" />
+
 
             <!-- Result Section -->
             <TextView
@@ -163,14 +174,32 @@
                 android:textSize="18sp"
                 android:padding="16dp" />
 
-            <Button
-                android:id="@+id/waterplantButton"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Water plant"
-                android:textSize="18sp"
-                android:padding="16dp" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="16dp">
+
+                <Button
+                    android:id="@+id/waterplantButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="Water Plant"
+                    android:textSize="18sp"
+                    android:padding="16dp" />
+
+                <Button
+                    android:id="@+id/sprinklerButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sprinkler"
+                    android:textSize="18sp"
+                    android:padding="16dp" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

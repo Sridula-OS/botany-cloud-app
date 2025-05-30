@@ -11,18 +11,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View;
 import android.widget.Button;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.IOException;
 
 public class TulsiActivity extends BaseActivity {
     private TextView soilMoistureTextView;
     private TextView humidityTextView;
     private TextView temperatureTextView;
+    private TextView phTextView;
     private EditText precipitationEditText;
     private TextView resultTextView;
     private Spinner daySpinner, potSizeSpinner;
     private String potSizeCategory;
     private String soiltype;
     private float waterNeeded=0.0f;
+    private DatabaseReference pumpStatusRef;
+    private DatabaseReference servoStatusRef;
+    private boolean isSprinklerOn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +48,7 @@ public class TulsiActivity extends BaseActivity {
         soilMoistureTextView = findViewById(R.id.soilMoistureTextView);
         humidityTextView = findViewById(R.id.humidityTextView);
         temperatureTextView=findViewById(R.id.temperatureTextView);
+        phTextView = findViewById(R.id.phTextView);
         precipitationEditText = findViewById(R.id.precipitationEditText);
         resultTextView = findViewById(R.id.resultTextView);
 
@@ -66,11 +78,41 @@ public class TulsiActivity extends BaseActivity {
         }
         potSizeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, potSizes));
 
-        // Fetch Soil Moisture Data
-        String blynkUrl = "https://blr1.blynk.cloud/external/api/get?token=08HSHBGfNPa53CbXaFQIOWsqQ-c4xDhP&V1&V2&V0";  // For soil moisture
-        new FetchBlynkDataTask(this).fetchDataFromBlynk(blynkUrl);
+
+        // Initialize Firebase Database references
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        pumpStatusRef = database.getReference("pumpStatus");
+        servoStatusRef = database.getReference("ServoControl/servo0/status");
+// Add listener for sprinkler status changes
+        servoStatusRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Integer status = dataSnapshot.getValue(Integer.class);
+                    if (status != null) {
+                        isSprinklerOn = status == 1;
+
+                        // Show message when sprinkler turns off automatically
+                        if (status == 0 && isSprinklerOn) {
+                            Toast.makeText(TulsiActivity.this,
+                                    "Sprinkler turned off automatically",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("TulsiActivity", "Failed to read servo status", databaseError.toException());
+            }
+        });
 
 
+        // Fetch sensor data
+        FetchFirebaseDataTask fetchTask = new FetchFirebaseDataTask(this);
+        fetchTask.fetchDataFromFirebase();
+        
         // Setup Navigation Bar
         setupNavigationBar();
 
@@ -78,59 +120,68 @@ public class TulsiActivity extends BaseActivity {
         findViewById(R.id.calculateButton).setOnClickListener(v -> calculateWaterRequirement());
 
         findViewById(R.id.waterplantButton).setOnClickListener(v -> waterplant());
+        findViewById(R.id.sprinklerButton).setOnClickListener(v -> toggleSprinkler());
     }
 
-    private void waterplant(){
-        if(waterNeeded>0)
-        {
-            float time=20 * waterNeeded* 1000;
+    private void waterplant() {
+        if (waterNeeded > 0) {
+            // Calculate pump duration in milliseconds (20ms per unit of waterNeeded)
+            long pumpDuration = (long) (20 * waterNeeded * 1000);
 
-            //to turn the relay on
-            String relayONUrl = "https://blr1.blynk.cloud/external/api/update?token=08HSHBGfNPa53CbXaFQIOWsqQ-c4xDhP&V12=1";  // For soil moisture
+            // Turn the pump ON
+            pumpStatusRef.setValue(1)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("TulsiActivity", "Pump turned ON");
+                        Toast.makeText(TulsiActivity.this,
+                                "Watering plant for " + (pumpDuration/1000) + " seconds",
+                                Toast.LENGTH_SHORT).show();
 
-            // Call the updateData method and pass the callback to handle the result
-            new FetchBlynkDataTask(this).updateData(relayONUrl,  new FetchBlynkDataTask.UpdateDataCallback() {
-                @Override
-                public void onDataUpdated(boolean success) {
-                    if (success) {
-                        // Successfully updated data
-                        Log.d("TulsiActivity", "Relay turned ON");
-                        // Do something after success, like updating UI
-                    } else {
-                        // Failed to update data
-                        Log.d("TulsiActivity", "Failed to turn the relay ON");
-                        // Handle failure, show an error message, etc.
-                    }
-                }
-            });
+                        // Schedule to turn the pump OFF after the calculated duration
+                        new Handler().postDelayed(() -> {
+                            pumpStatusRef.setValue(0)
+                                    .addOnSuccessListener(aVoid1 -> {
+                                        Log.d("TulsiActivity", "Pump turned OFF");
+                                        Toast.makeText(TulsiActivity.this,
+                                                "Watering completed",
+                                                Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("TulsiActivity", "Failed to turn pump OFF", e);
+                                        Toast.makeText(TulsiActivity.this,
+                                                "Failed to turn pump OFF",
+                                                Toast.LENGTH_SHORT).show();
+                                    });
+                        }, pumpDuration);
 
-            //to turn the relay off after time period
-            new Handler().postDelayed(() -> {
-                String relayOFFUrl = "https://blr1.blynk.cloud/external/api/update?token=08HSHBGfNPa53CbXaFQIOWsqQ-c4xDhP&V12=0";  // For soil moisture
-
-                // Call the updateData method and pass the callback to handle the result
-                new FetchBlynkDataTask(this).updateData(relayOFFUrl, new FetchBlynkDataTask.UpdateDataCallback() {
-                    @Override
-                    public void onDataUpdated(boolean success) {
-                        if (success) {
-                            // Successfully updated data
-                            Log.d("TulsiActivity", "Relay turned OFF");
-                            // Do something after success, like updating UI
-                        } else {
-                            // Failed to update data
-                            Log.d("TulsiActivity", "Failed to turn the relay OFF");
-                            // Handle failure, show an error message, etc.
-                        }
-                    }
-                });
-                Toast.makeText(TulsiActivity.this, "Relay turned OFF after"+time+ "milliseconds", Toast.LENGTH_SHORT).show();
-            }, (long) time);
-            waterNeeded=0.0f;
-
+                        waterNeeded = 0.0f;
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("TulsiActivity", "Failed to turn pump ON", e);
+                        Toast.makeText(TulsiActivity.this,
+                                "Failed to start watering",
+                                Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            Toast.makeText(this, "Please calculate water requirement first", Toast.LENGTH_SHORT).show();
         }
     }
 
-
+    private void toggleSprinkler() {
+        int newStatus = isSprinklerOn ? 0 : 1;
+        servoStatusRef.setValue(newStatus)
+                .addOnSuccessListener(aVoid -> {
+                    String message = newStatus == 1 ?
+                            "Sprinkler turned ON" : "Sprinkler turned OFF";
+                    Toast.makeText(TulsiActivity.this, message, Toast.LENGTH_SHORT).show();
+                    Log.d("TulsiActivity", message);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(TulsiActivity.this,
+                            "Failed to control sprinkler",
+                            Toast.LENGTH_SHORT).show();
+                    Log.e("TulsiActivity", "Failed to control sprinkler", e);
+                });
+    }
     private void calculateWaterRequirement() {
         float baseWaterRequirement=2.0f;
         try {

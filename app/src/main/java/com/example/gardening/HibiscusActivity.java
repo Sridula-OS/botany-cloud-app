@@ -1,5 +1,6 @@
 package com.example.gardening;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -11,18 +12,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View;
 import android.widget.Button;
-import java.io.IOException;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class HibiscusActivity extends BaseActivity {
     private TextView soilMoistureTextView;
     private TextView humidityTextView;
     private TextView temperatureTextView;
+    private TextView phTextView;
     private EditText precipitationEditText;
     private TextView resultTextView;
     private Spinner daySpinner, potSizeSpinner;
     private String potSizeCategory;
     private String soiltype;
-    private float waterNeeded=0.0f;
+    private float waterNeeded = 0.0f;
+    private DatabaseReference pumpStatusRef;
+    private DatabaseReference servoStatusRef;
+    private boolean isSprinklerOn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +42,15 @@ public class HibiscusActivity extends BaseActivity {
 
         // Get the pot size category from intent
         potSizeCategory = getIntent().getStringExtra("POT_SIZE_CATEGORY");
-        soiltype=getIntent().getStringExtra("SOIL_TYPE");
+        soiltype = getIntent().getStringExtra("SOIL_TYPE");
+
+        FirebaseApp.initializeApp(this);
 
         // Initialize views
         soilMoistureTextView = findViewById(R.id.soilMoistureTextView);
         humidityTextView = findViewById(R.id.humidityTextView);
-        temperatureTextView=findViewById(R.id.temperatureTextView);
+        temperatureTextView = findViewById(R.id.temperatureTextView);
+        phTextView = findViewById(R.id.phTextView);
         precipitationEditText = findViewById(R.id.precipitationEditText);
         resultTextView = findViewById(R.id.resultTextView);
 
@@ -66,10 +80,39 @@ public class HibiscusActivity extends BaseActivity {
         }
         potSizeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, potSizes));
 
-        // Fetch Soil Moisture Data
-        String blynkUrl = "https://blr1.blynk.cloud/external/api/get?token=08HSHBGfNPa53CbXaFQIOWsqQ-c4xDhP&V1&V2&V0";  // For soil moisture
-        new FetchBlynkDataTask(this).fetchDataFromBlynk(blynkUrl);
+        // Initialize Firebase Database references
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        pumpStatusRef = database.getReference("pumpStatus");
+        servoStatusRef = database.getReference("ServoControl/servo0/status");
+// Add listener for sprinkler status changes
+        servoStatusRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Integer status = dataSnapshot.getValue(Integer.class);
+                    if (status != null) {
+                        isSprinklerOn = status == 1;
 
+                        // Show message when sprinkler turns off automatically
+                        if (status == 0 && isSprinklerOn) {
+                            Toast.makeText(HibiscusActivity.this,
+                                    "Sprinkler turned off automatically",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("HibiscusActivity", "Failed to read servo status", databaseError.toException());
+            }
+        });
+
+
+        // Fetch sensor data
+        FetchFirebaseDataTask fetchTask = new FetchFirebaseDataTask(this);
+        fetchTask.fetchDataFromFirebase();
 
         // Setup Navigation Bar
         setupNavigationBar();
@@ -77,62 +120,74 @@ public class HibiscusActivity extends BaseActivity {
         // Calculate Water Requirement on button click
         findViewById(R.id.calculateButton).setOnClickListener(v -> calculateWaterRequirement());
 
+        // Water Plant button click listener
         findViewById(R.id.waterplantButton).setOnClickListener(v -> waterplant());
+        findViewById(R.id.sprinklerButton).setOnClickListener(v -> toggleSprinkler());
     }
 
-    private void waterplant(){
-        if(waterNeeded>0)
-        {
-            float time=20 * waterNeeded* 1000;
+    private void waterplant() {
+        if (waterNeeded > 0) {
+            // Calculate pump duration in milliseconds (20ms per unit of waterNeeded)
+            long pumpDuration = (long) (20 * waterNeeded * 1000);
 
-            //to turn the relay on
-            String relayONUrl = "https://blr1.blynk.cloud/external/api/update?token=08HSHBGfNPa53CbXaFQIOWsqQ-c4xDhP&V12=1";  // For soil moisture
+            // Turn the pump ON
+            pumpStatusRef.setValue(1)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("HibiscusActivity", "Pump turned ON");
+                        Toast.makeText(HibiscusActivity.this,
+                                "Watering plant for " + (pumpDuration/1000) + " seconds",
+                                Toast.LENGTH_SHORT).show();
 
-            // Call the updateData method and pass the callback to handle the result
-            new FetchBlynkDataTask(this).updateData(relayONUrl,  new FetchBlynkDataTask.UpdateDataCallback() {
-                @Override
-                public void onDataUpdated(boolean success) {
-                    if (success) {
-                        // Successfully updated data
-                        Log.d("HibiscusActivity", "Relay turned ON");
-                        // Do something after success, like updating UI
-                    } else {
-                        // Failed to update data
-                        Log.d("HibiscusActivity", "Failed to turn the relay ON");
-                        // Handle failure, show an error message, etc.
-                    }
-                }
-            });
+                        // Schedule to turn the pump OFF after the calculated duration
+                        new Handler().postDelayed(() -> {
+                            pumpStatusRef.setValue(0)
+                                    .addOnSuccessListener(aVoid1 -> {
+                                        Log.d("HibiscusActivity", "Pump turned OFF");
+                                        Toast.makeText(HibiscusActivity.this,
+                                                "Watering completed",
+                                                Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("HibiscusActivity", "Failed to turn pump OFF", e);
+                                        Toast.makeText(HibiscusActivity.this,
+                                                "Failed to turn pump OFF",
+                                                Toast.LENGTH_SHORT).show();
+                                    });
+                        }, pumpDuration);
 
-            //to turn the relay off after time period
-            new Handler().postDelayed(() -> {
-                String relayOFFUrl = "https://blr1.blynk.cloud/external/api/update?token=08HSHBGfNPa53CbXaFQIOWsqQ-c4xDhP&V12=0";  // For soil moisture
-
-                // Call the updateData method and pass the callback to handle the result
-                new FetchBlynkDataTask(this).updateData(relayOFFUrl, new FetchBlynkDataTask.UpdateDataCallback() {
-                    @Override
-                    public void onDataUpdated(boolean success) {
-                        if (success) {
-                            // Successfully updated data
-                            Log.d("HibiscusActivity", "Relay turned OFF");
-                            // Do something after success, like updating UI
-                        } else {
-                            // Failed to update data
-                            Log.d("HibiscusActivity", "Failed to turn the relay OFF");
-                            // Handle failure, show an error message, etc.
-                        }
-                    }
-                });
-                Toast.makeText(HibiscusActivity.this, "Relay turned OFF after"+time+ "milliseconds", Toast.LENGTH_SHORT).show();
-            }, (long) time);
-            waterNeeded=0.0f;
-
+                        waterNeeded = 0.0f;
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("HibiscusActivity", "Failed to turn pump ON", e);
+                        Toast.makeText(HibiscusActivity.this,
+                                "Failed to start watering",
+                                Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            Toast.makeText(this, "Please calculate water requirement first", Toast.LENGTH_SHORT).show();
         }
+    }
+//sprinkler
+    private void toggleSprinkler() {
+        int newStatus = isSprinklerOn ? 0 : 1;
+        servoStatusRef.setValue(newStatus)
+                .addOnSuccessListener(aVoid -> {
+                    String message = newStatus == 1 ?
+                            "Sprinkler turned ON" : "Sprinkler turned OFF";
+                    Toast.makeText(HibiscusActivity.this, message, Toast.LENGTH_SHORT).show();
+                    Log.d("HibiscusActivity", message);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(HibiscusActivity.this,
+                            "Failed to control sprinkler",
+                            Toast.LENGTH_SHORT).show();
+                    Log.e("HibiscusActivity", "Failed to control sprinkler", e);
+                });
     }
 
 
     private void calculateWaterRequirement() {
-        float baseWaterRequirement=2f;
+        float baseWaterRequirement = 2f;
         try {
             String daySelection = daySpinner.getSelectedItem().toString();
             String potSizeSelection = potSizeSpinner.getSelectedItem().toString();
@@ -150,9 +205,15 @@ public class HibiscusActivity extends BaseActivity {
 
             // Adjust daily water requirement based on pot size category
             switch (soiltype.toLowerCase()) {
-                case "loamy":baseWaterRequirement = daySelection.equals("<21") ? 2.5f : 1.75f;break;
-                case "black": baseWaterRequirement = daySelection.equals("<21") ? 2.0f : 1.35f;break;
-                case "sandy loam": baseWaterRequirement = daySelection.equals("<21") ? 3f : 2.25f;break;
+                case "loamy":
+                    baseWaterRequirement = daySelection.equals("<21") ? 2.5f : 1.75f;
+                    break;
+                case "black":
+                    baseWaterRequirement = daySelection.equals("<21") ? 2.0f : 1.35f;
+                    break;
+                case "sandy loam":
+                    baseWaterRequirement = daySelection.equals("<21") ? 3f : 2.25f;
+                    break;
             }
             float sizeMultiplier;
             switch (potSizeCategory.toLowerCase()) {
@@ -170,7 +231,7 @@ public class HibiscusActivity extends BaseActivity {
             float dailyWaterRequirement = baseWaterRequirement * sizeMultiplier;
             float precipitationContribution = precipitation * potArea;
             float soilMoistureAdjustment = (100 - soilMoisture) / 100.0f;
-            waterNeeded = (dailyWaterRequirement * potArea * soilMoistureAdjustment - precipitationContribution)*10;
+            waterNeeded = (dailyWaterRequirement * potArea * soilMoistureAdjustment - precipitationContribution) * 10;
             waterNeeded = Math.max(0, waterNeeded);
 
             resultTextView.setText(String.format("Water Needed: %.2f Litres", waterNeeded));

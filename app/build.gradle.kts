@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services") // Firebase plugin
 }
 
 android {
@@ -36,34 +37,39 @@ android {
 }
 
 dependencies {
-    //5 new dependencies
-    implementation ("androidx.camera:camera-core:1.4.1")
-    implementation ("androidx.camera:camera-camera2:1.4.1")
-    implementation ("androidx.camera:camera-lifecycle:1.4.1")
-    implementation ("androidx.camera:camera-view:1.4.1")
-    implementation ("com.google.guava:guava:30.1-android")
+    // CameraX dependencies
+    implementation("androidx.camera:camera-core:1.4.1")
+    implementation("androidx.camera:camera-camera2:1.4.1")
+    implementation("androidx.camera:camera-lifecycle:1.4.1")
+    implementation("androidx.camera:camera-view:1.4.1")
 
-    implementation ("androidx.recyclerview:recyclerview:1.3.1")
-    implementation ("com.android.volley:volley:1.2.0")
+    // UI
+    implementation("androidx.recyclerview:recyclerview:1.3.1")
 
-    // add the dependency for the Google AI client SDK for Android
+    // Networking
+    implementation("com.android.volley:volley:1.2.0")
+
+    // Google AI
     implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
-
-    // Required for one-shot operations (to use `ListenableFuture` from Reactive Streams)
-    implementation("com.google.guava:guava:31.0.1-android")
-
-    // Required for streaming operations (to use `Publisher` from Guava Android)
     implementation("org.reactivestreams:reactive-streams:1.0.4")
 
-
+    // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.recyclerview)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(kotlin("script-runtime"))
+
+    // Firebase (corrected Kotlin DSL syntax)
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-database-ktx")
+
+    // Guava (only one version)
+    implementation("com.google.guava:guava:31.0.1-android")
 }
