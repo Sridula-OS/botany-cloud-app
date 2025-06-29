@@ -42,9 +42,10 @@ public class FetchFirebaseDataTask {
 
                     Integer latestNumber = dataSnapshot.getValue(Integer.class);
                     if (latestNumber != null && latestNumber != currentLatestNumber) {
-                        currentLatestNumber = latestNumber-1;
-                        // Now fetch the corresponding sensor data
-                        fetchSpecificSensorData(latestNumber-1);
+                        int dataIndex = (latestNumber - 2 + 99) % 99 + 1;
+                        currentLatestNumber = dataIndex;
+                        fetchSpecificSensorData(dataIndex);
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
