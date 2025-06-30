@@ -47,20 +47,21 @@ public class ChatbotActivity extends BaseActivity {
 
 
             // Create GeminiPro instance and get the response
-            GeminiPro geminiPro = new GeminiPro();
-            geminiPro.getResponse(query, new ResponseCallback() {
+            GroqChat groqChat = new GroqChat();
+            groqChat.getResponse(query, new ResponseCallback() {
                 @Override
                 public void onResponse(String response) {
-                    responseTextView.setText(response); // Set the response text
-                    progressBar.setVisibility(View.GONE); // Hide progress bar
+                    responseTextView.setText(response);
+                    progressBar.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
                     Toast.makeText(ChatbotActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE); // Hide progress bar
+                    progressBar.setVisibility(View.GONE);
                 }
             });
+
 
         });
     }
