@@ -42,7 +42,7 @@ public class FetchFirebaseDataTask {
 
                     Integer latestNumber = dataSnapshot.getValue(Integer.class);
                     if (latestNumber != null && latestNumber != currentLatestNumber) {
-                        int dataIndex = (latestNumber - 2 + 99) % 99 + 1;
+                        int dataIndex = (latestNumber - 2 + 100) % 100 + 1;
                         currentLatestNumber = dataIndex;
                         fetchSpecificSensorData(dataIndex);
 
